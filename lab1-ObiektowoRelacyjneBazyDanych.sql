@@ -1,0 +1,110 @@
+DROP TABLE SAMOCHODY;
+DROP TYPE SAMOCHOD;
+
+-- excercise 1--
+CREATE TYPE Samochod as Object(
+MARKA VARCHAR2(20),
+MODEL VARCHAR2(20),
+KILOMETRY NUMBER,
+DATA_PRODUKCJI DATE,
+CENA NUMBER(10,2)
+)
+
+desc Samochod
+create table Samochody of Samochod
+
+INSERT ALL
+INTO Samochody values (new Samochod('FIAT', 'Brava', 60000, '1999-11-30', 25000))
+INTO Samochody values (new Samochod('Ford', 'Mondeo', 80000, '1997-05-10', 45000))
+INTO Samochody values (new Samochod('Mazda', '323', 12000, '2000-09-22', 52000))
+SELECT 1 FROM Dual;
+
+SELECT * FROM Samochody;
+
+--excercise 2--
+CREATE TABLE Wlasciciele (
+IMIE VARCHAR2(100),
+NAZWISKO VARCHAR2(100),
+AUTO Samochod
+);
+
+INSERT ALL
+INTO Wlasciciele values ('Jan','Kowalski', new Samochod('Skoda', 'Fabia', 10000, '2011-01-01', 30000))
+INTO Wlasciciele values ('Adam', 'Nowak', new Samochod('FIAT', 'Brava', 6000, '1999-11-30', 25000))
+SELECT 1 FROM Dual;
+
+SELECT * from Wlasciciele;
+
+--excercise 3 --
+ALTER TYPE Samochod REPLACE AS OBJECT
+(
+    MARKA VARCHAR2(20),
+    MODEL VARCHAR2(20),
+    KILOMETRY NUMBER,
+    DATA_PRODUKCJI DATE,
+    CENA NUMBER(10,2),
+    MEMBER FUNCTION wartosc RETURN NUMBER,
+    MEMBER FUNCTION wiek RETURN NUMBER
+);
+
+CREATE OR REPLACE TYPE BODY Samochod AS
+MEMBER FUNCTION wiek RETURN NUMBER IS
+    BEGIN  
+        RETURN EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT (YEAR FROM data_produkcji);
+    END wiek;
+MEMBER FUNCTION wartosc RETURN NUMBER IS
+    BEGIN  
+        RETURN CENA * POWER(0.9, wiek());
+    END wartosc;
+END;
+    
+SELECT s.marka, s.cena, s.wartosc() FROM SAMOCHODY s;
+
+-- excercise 4 --
+ALTER TYPE Samochod REPLACE AS OBJECT
+(
+    MARKA VARCHAR2(20),
+    MODEL VARCHAR2(20),
+    KILOMETRY NUMBER,
+    DATA_PRODUKCJI DATE,
+    CENA NUMBER(10,2),
+    MEMBER FUNCTION wartosc RETURN NUMBER,
+    MEMBER FUNCTION wiek RETURN NUMBER,
+    MAP MEMBER FUNCTION odwzoruj RETURN NUMBER
+);
+
+CREATE OR REPLACE TYPE BODY Samochod AS
+MEMBER FUNCTION wiek RETURN NUMBER IS
+    BEGIN  
+        RETURN EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT (YEAR FROM data_produkcji);
+    END wiek;
+MEMBER FUNCTION wartosc RETURN NUMBER IS
+    BEGIN  
+        RETURN CENA * POWER(0.9, wiek());
+    END wartosc;
+MAP MEMBER FUNCTION odwzoruj RETURN NUMBER IS
+    BEGIN
+        RETURN KILOMETRY/1000 + wiek();
+    END odwzoruj;
+END;
+
+SELECT * FROM SAMOCHODY s ORDER BY VALUE(s);
+
+--excercise 5 --
+CREATE OR REPLACE TYPE Wlasciciel as Object(
+IMIE VARCHAR2(100),
+NAZWISKO VARCHAR2(100)
+);
+
+ALTER TYPE Samochod REPLACE AS OBJECT
+(
+    MARKA VARCHAR2(20),
+    MODEL VARCHAR2(20),
+    KILOMETRY NUMBER,
+    DATA_PRODUKCJI DATE,
+    CENA NUMBER(10,2),
+    MEMBER FUNCTION wartosc RETURN NUMBER,
+    MEMBER FUNCTION wiek RETURN NUMBER,
+    MAP MEMBER FUNCTION odwzoruj RETURN NUMBER,
+    WLASCICIEL REF Wlasciciel
+);
