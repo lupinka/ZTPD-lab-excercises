@@ -64,9 +64,49 @@ SELECT dbms_lob.getlength(DOKUMENT) FROM DOKUMENTY;
 --excercise 12
 DROP TABLE DOKUMENTY;
 
---excercise 13 - TODO: 
-CREATE PROCEDURE CLOB_CENSOR(doc IN CLOB, text IN VARCHAR2)
+--excercise 13
+DROP PROCEDURE CLOB_CENSOR;
+CREATE PROCEDURE CLOB_CENSOR(text_original IN CLOB, text_to_replace IN VARCHAR2, result OUT CLOB)
 IS
+    POSITION INTEGER;
+    PATTERN VARCHAR(250);
 BEGIN
-    DBMS_LOB.WRITE (doc, length(text), INSTR(doc, text), text);
+    PATTERN := '';
+        for i in 1..length(text_to_replace)
+            loop
+                PATTERN := PATTERN || '.';
+            end loop;
+    result := text_original;
+    POSITION := DBMS_LOB.INSTR(result, text_to_replace);
+    while POSITION <> 0
+        loop
+            DBMS_LOB.WRITE(
+                    result,
+                    length(text_to_replace),
+                    POSITION,
+                    PATTERN);
+            POSITION := DBMS_LOB.INSTR(result, text_to_replace);
+        end loop;
 END;
+
+--excercise 14
+CREATE TABLE BIOGRAPHIES_COPY AS SELECT * FROM ZSBD_TOOLS.BIOGRAPHIES;
+
+SELECT * FROM BIOGRAPHIES_COPY;
+
+DECLARE
+    text_original  CLOB;
+    result CLOB;
+BEGIN
+    SELECT BIO
+    INTO text_original
+    FROM BIOGRAPHIES_COPY
+        FOR UPDATE;
+
+    dbms_output.put_line(text_original);
+    CLOB_CENSOR(text_original, 'Cimrman', result);
+    dbms_output.put_line(result);
+end ;
+
+--excercise 15
+DROP TABLE BIOGRAPHIES_COPY;
