@@ -98,4 +98,8 @@ public class KursAkcji {
 	public void setObrot(Float obrot) {
 		this.obrot = obrot;
 	}
+
+	public static Result isGrowing(Float kursOtwarcia, Float kursZamkniecia) {
+		return new Result(kursZamkniecia < kursOtwarcia);
+	}
 }

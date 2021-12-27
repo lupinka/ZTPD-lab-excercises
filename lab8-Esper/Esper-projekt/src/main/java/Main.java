@@ -16,9 +16,33 @@ public class Main {
         EPRuntime epRuntime = EPRuntimeProvider.getDefaultRuntime(configuration);
         EPDeployment deployment = compileAndDeploy(
                 epRuntime,
-                "select istream data, spolka, kursOtwarcia - min(kursOtwarcia) as roznica"
+                //lab 9 zad 8
+                "select istream data, spolka, kursZamkniecia, kursOtwarcia, max(kursZamkniecia) - kursZamkniecia as roznica"
+                        +" from KursAkcji(spolka = 'PepsiCo' or spolka = 'CocaCola').win:ext_timed(data.getTime(), 7 days) "
+
+                //lab 9 zad 7b
+                /*"select istream data, spolka, kursZamkniecia, kursOtwarcia" +
+                        " from KursAkcji().win:length(1) as k," +
+                        " method:KursAkcji.isGrowing(k.kursZamkniecia, k.kursOtwarcia) as m" +
+                        " where m.value = TRUE"*/
+                //lab 9 zad 7a
+                /*"select istream data, spolka, kursZamkniecia, kursOtwarcia"
+                        +" from KursAkcji().win:length(1) "
+                        + " having (kursZamkniecia - kursOtwarcia > 0)"*/
+                //lab 9 zad 6 TODO:
+                //lab 9 zad 5 TODO:
+                /*"SELECT distinct max(KI.kursZamkniecia), KI.data.getDayOfYear() " +
+                        "from KursAkcji().win:ext_timed(data.getTime(), 1 days) as KI " +
+                        "group by KI.data.getDayOfYear()"*/
+                //lab 9 zad 4
+                /*"select irstream data, kursZamkniecia, max(kursZamkniecia) " +
+                        "from KursAkcji(spolka = 'Oracle').win:ext_timed_batch(data.getTime(), 7 days)"*/
+                /*"select irstream data, kursZamkniecia, max(kursZamkniecia) " +
+                        "from KursAkcji(spolka = 'Oracle').win:ext_timed(data.getTime(), 7 days)"*/
+                //lab 8
+                /*"select istream data, spolka, kursOtwarcia - min(kursOtwarcia) as roznica"
                         +" from KursAkcji(spolka = 'Oracle').win:length(2) "
-                        + " having (kursOtwarcia = max(kursOtwarcia) and kursOtwarcia - min(kursOtwarcia) > 0)"
+                        + " having (kursOtwarcia = max(kursOtwarcia) and kursOtwarcia - min(kursOtwarcia) > 0)"*/
                 /*"select istream data, spolka, kursOtwarcia - max(kursOtwarcia) as roznica"
                         +" from KursAkcji(spolka = 'Oracle').win:length(5) "*/
                 /*"select istream data, spolka, max(kursOtwarcia) "
