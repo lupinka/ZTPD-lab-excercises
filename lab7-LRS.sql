@@ -1,3 +1,4 @@
+zad 1
 --a
 create table A6_LRS (
     GEOM SDO_GEOMETRY
@@ -39,6 +40,7 @@ CREATE INDEX street_idx
 ON A6_LRS(GEOM)
 INDEXTYPE IS MDSYS.SPATIAL_INDEX;
 
+--zad 2
 --a
 select SDO_LRS.VALID_MEASURE(GEOM, 1000) VALID_1000
 from A6_LRS;

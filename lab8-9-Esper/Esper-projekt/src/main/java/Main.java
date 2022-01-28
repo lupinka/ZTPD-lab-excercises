@@ -16,9 +16,16 @@ public class Main {
         EPRuntime epRuntime = EPRuntimeProvider.getDefaultRuntime(configuration);
         EPDeployment deployment = compileAndDeploy(
                 epRuntime,
-                //lab 9 zad 8
+                //lab 9 zad 9
+/*                "select max(k2.kursZamkniecia) " +
+                        " from KursAkcji(spolka = 'PepsiCo' or spolka = 'CocaCola').win:ext_timed_batch(data.getTime(), 1 days) as k2" */
+                "select istream k.data, k.spolka, k.kursZamkniecia " +
+                        " from KursAkcji((spolka = 'PepsiCo' or spolka = 'CocaCola') and " +
+                            " kursZamkniecia = (select max(k2.kursZamkniecia) from KursAkcji(spolka = 'PepsiCo' or spolka = 'CocaCola').win:ext_timed_batch(data.getTime(), 1 days) as k2 where k.data=k2.data)" +
+                        ") as k"
+                /*//lab 9 zad 8
                 "select istream data, spolka, kursZamkniecia, kursOtwarcia, max(kursZamkniecia) - kursZamkniecia as roznica"
-                        +" from KursAkcji(spolka = 'PepsiCo' or spolka = 'CocaCola').win:ext_timed(data.getTime(), 7 days) "
+                        +" from KursAkcji(spolka = 'PepsiCo' or spolka = 'CocaCola').win:ext_timed(data.getTime(), 7 days) "*/
 
                 //lab 9 zad 7b
                 /*"select istream data, spolka, kursZamkniecia, kursOtwarcia" +
